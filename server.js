@@ -44,7 +44,8 @@ app.get('/health', (req, res) => {
 // Import Routes
 const authRoutes = require('./src/routes/auth.routes');
 app.use('/api/auth', authRoutes);
-// TODO: app.use('/api/tasks', taskRoutes);
+const taskRoutes = require('./src/routes/task.routes');
+app.use('/api/tasks', taskRoutes);
 
 // 404 Route
 app.use((req, res, next) => {
