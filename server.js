@@ -42,7 +42,8 @@ app.get('/health', (req, res) => {
 });
 
 // Import Routes
-// TODO: app.use('/api/auth', authRoutes);
+const authRoutes = require('./src/routes/auth.routes');
+app.use('/api/auth', authRoutes);
 // TODO: app.use('/api/tasks', taskRoutes);
 
 // 404 Route
@@ -54,7 +55,8 @@ app.use((req, res, next) => {
 });
 
 // Global Error Handler
-// TODO: Import and use centralized error handler middleware
+const errorHandler = require('./src/middleware/errorHandler');
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
