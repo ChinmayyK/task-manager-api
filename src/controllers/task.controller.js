@@ -3,7 +3,11 @@ const sendResponse = require('../utils/response');
 
 const createTask = async (req, res, next) => {
   try {
-    const task = await taskService.createTask(req.user.id, req.body);
+    const taskData = { ...req.body };
+    if (req.file) {
+      taskData.attachment = req.file.path;
+    }
+    const task = await taskService.createTask(req.user.id, taskData);
     return sendResponse(res, 201, 'Task created successfully', task);
   } catch (error) {
     next(error);
@@ -30,7 +34,11 @@ const getTaskById = async (req, res, next) => {
 
 const updateTask = async (req, res, next) => {
   try {
-    const task = await taskService.updateTask(req.user.id, req.params.id, req.body);
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.attachment = req.file.path;
+    }
+    const task = await taskService.updateTask(req.user.id, req.params.id, updateData);
     return sendResponse(res, 200, 'Task updated successfully', task);
   } catch (error) {
     next(error);
