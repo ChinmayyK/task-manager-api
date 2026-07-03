@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Pass the backend URL to the frontend during build time
+        - VITE_API_URL=${FRONTEND_VITE_API_URL:-http://localhost:3000/api}
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD:-root}@db:3306/task_manager
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=7d
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/uploads:/usr/src/app/uploads
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: task_manager
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
