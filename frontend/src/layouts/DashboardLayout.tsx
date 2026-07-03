@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import { Home, CheckSquare, LogOut, Settings, User } from 'lucide-react';
+import { Home, CheckSquare, LogOut, Settings, User, Menu } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export function DashboardLayout() {
   const { user, logout } = useAuthStore();
@@ -66,8 +67,35 @@ export function DashboardLayout() {
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64 w-full">
         {/* Top Header */}
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <Sheet>
+            <SheetTrigger className={buttonVariants({ variant: "outline", size: "icon" }) + " sm:hidden shrink-0"}>
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle Menu</span>
+            </SheetTrigger>
+            <SheetContent side="left" className="sm:max-w-xs">
+              <nav className="grid gap-6 text-lg font-medium">
+                <Link to="/dashboard" className="flex items-center gap-2 font-semibold pb-4 border-b">
+                  <span className="text-primary text-2xl">Lineup</span>
+                  <span className="text-2xl">Tasks</span>
+                </Link>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center gap-4 px-2.5 hover:text-primary ${
+                      location.pathname.startsWith(item.path) ? 'text-primary font-semibold' : 'text-muted-foreground'
+                    }`}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+
           <div className="w-full flex-1">
-            <h1 className="font-semibold text-lg sm:text-2xl capitalize">
+            <h1 className="font-semibold text-lg sm:text-2xl capitalize hidden sm:block">
               {location.pathname.split('/')[1] || 'Dashboard'}
             </h1>
           </div>
