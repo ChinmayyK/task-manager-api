@@ -4,6 +4,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const rateLimit = require('express-rate-limit');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/docs/swagger');
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +37,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Basic Health Check Route
 app.get('/health', (req, res) => {
